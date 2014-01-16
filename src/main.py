@@ -1,4 +1,4 @@
-import vision_color_detection as vision
+import vision as vision
 import time
 
 ################################################################################
