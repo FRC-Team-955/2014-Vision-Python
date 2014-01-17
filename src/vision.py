@@ -14,7 +14,7 @@ cv2.namedWindow('color', cv2.WINDOW_NORMAL)
 cv2.namedWindow('filtered', cv2.WINDOW_NORMAL)
 
 print "vision name", __name__
-index = 0
+
 def update():
     print "update()"
 
@@ -22,15 +22,14 @@ def update():
     ret, img = camera.read() # img.shape 640x480 image
     cv2.imshow("color", img)
     cv2.waitKey(10)
-    global index
-    index += 1
-    # cv2.imwrite(str(index) + "img.jpg", img)
+
     # Convert to hsv img
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Keep only green objects
+    # higher s = less white, higher v = less black
     lowerGreen = np.array([70, 0, 225])
-    upperGreen = np.array([110, 110,255])
+    upperGreen = np.array([110, 130,255])
     filteredGreen = cv2.inRange(hsv, lowerGreen, upperGreen)
 
     # Filter out small objects
@@ -45,13 +44,12 @@ def update():
     for shape in contours:
         target = Rectangle(*cv2.boundingRect(shape))
         foundHotTarget = False
-        
+
         # If the width of the target is greater than its height then it's probably the hot target
         if target.width >= target.height * 2.5:
             foundHotTarget = True
             drawRect(img, target)
             distance = computeDistance(horizTarget.height, target.height)
-            viewAngle = computeAngle(horizTarget.height, target.height, 78)
             print "Distance: ", round(distance), ", Hot Target"
 
         # If the height of the target is greater than the its width its probably a vert target
