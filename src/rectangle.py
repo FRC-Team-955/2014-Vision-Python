@@ -9,3 +9,6 @@ class Rectangle:
 	def __str__(self):
 		return "x {0} y {1} width {2} height {3}".format(
 			self.x, self.y, self.width, self.height)
+
+	def getArea(self):
+		return self.width * self.height
