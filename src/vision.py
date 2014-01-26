@@ -1,11 +1,11 @@
 import cv2
 import math
-from rectangle import Rectangle
 import numpy as np
+from rectangle import Rectangle
 
 camera = cv2.VideoCapture(1)
 foundHotTarget = False
-viewAngleVert = 15.06 #25.7 #18.87
+viewAngleVert = 22.06 
 resHalfY = 240
 horizTarget = Rectangle(0.0, 0.0, 23.5, 4.0)
 vertTarget = Rectangle(0.0, 0.0, 4.0, 32.0)
@@ -23,6 +23,7 @@ def update():
     ret, img = camera.read() # img.shape 640x480 image
     cv2.imshow("color", img)
     cv2.waitKey(10)
+    
 
     # Blur img to help edge detection with contour find
     img = cv2.GaussianBlur(img, (7, 7), 0)
@@ -65,7 +66,8 @@ def update():
             elif target.height >= target.width * 6:
                 drawRect(img, target)
                 distance = computeDistance(vertTarget.height, target.height)
-                print "Distance: ", round(distance), ", Vert Target"
+                viewAngle = computeAngle(vertTarget.height, target.height, 121);
+                print "Distance: ", round(distance), ", Vert Target", viewAngle, viewAngleVert
     cv2.imshow("color", img)
     cv2.waitKey(10)
 
