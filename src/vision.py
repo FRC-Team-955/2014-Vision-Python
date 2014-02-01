@@ -7,6 +7,7 @@ camera = cv2.VideoCapture(1)
 foundHotTarget = False
 foundHorzTarget = False
 viewAngleVert = 19.832 
+distance = 0.0
 resHalfY = 240
 horizTarget = Rectangle(0.0, 0.0, 23.5, 4.0)
 vertTarget = Rectangle(0.0, 0.0, 4.0, 32.0)
@@ -18,7 +19,7 @@ if debugMode:
 
 print "vision name", __name__
 
-def update():
+def update(viewAngleHorz):
     print "update()"
 
     # Get color image from camera
@@ -50,6 +51,9 @@ def update():
         # Filter out small contours
         if target.getArea() > 300 and target.getArea() < 10000:
 
+            # Compensate for horizontal view of the target
+            target.width = target.width / math.cos(viewAngle * math.PI / 180)
+            
             # If the width of the target is greater than its height then it's probably the hot target
             if target.width >= target.height * 2.5:
                 foundHotTarget = True
@@ -61,7 +65,7 @@ def update():
                     print "Distance: ", round(distance), ", Hot Target", viewAngle, viewAngleVert
 
             # If the height of the target is greater than the its width its probably a vert target
-            elif target.height >= target.width * 6:
+            if target.height >= target.width * 6:
                 foundHorzTarget = True
                 distance = computeDistance(vertTarget.height, target.height)
 
@@ -75,6 +79,15 @@ def update():
         cv2.waitKey(10)
         cv2.imshow("filtered", filteredGreen)
         cv2.waitKey(10)
+
+def getFoundHotTarget():
+    return foundHotTarget
+
+def getFoundHorzTarget():
+    return foundHorzTarget
+
+def getDistance():
+    return distance
 
 def computeDistance(realHeight, targetHeight):
     return ((realHeight / targetHeight) * resHalfY) / math.tan(viewAngleVert * math.pi / 180.0)
